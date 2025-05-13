@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { OpenAIClient } from '@lib/openai'
+import { ROBOTS_PORTAL_URL } from 'src/config/envs'
 
 export default async function playE01(_: Request, res: Response) {
 	try {
@@ -20,14 +21,18 @@ export default async function playE01(_: Request, res: Response) {
 
 async function getRobotsLoginPage() {
 	try {
-		const response = await axios.get('https://xyz.ag3nts.org/')
+		const response = await axios.get(ROBOTS_PORTAL_URL)
 		const html = response.data
 		return html
 	} catch (error) {
-		console.error(
-			'Error fetching robots login page:',
-			error instanceof Error ? error.message : error
-		)
+		const errorMessage =
+			error instanceof AxiosError
+				? `Network error: ${error.message}`
+				: error instanceof Error
+					? error.message
+					: error
+
+		console.error('Error fetching robots login page:', errorMessage)
 		throw new Error('Failed to fetch robots login page')
 	}
 }
@@ -51,23 +56,29 @@ async function getCaptchaAnswer(question: string) {
 }
 
 async function hackRobotsLoginPage(answer: string) {
+	const payload = {
+		username: 'tester',
+		password: '574e112a',
+		answer: answer
+	}
+	const headers = {
+		'Content-Type': 'application/x-www-form-urlencoded'
+	}
+
 	try {
-		const res = await axios.post(
-			'https://xyz.ag3nts.org/',
-			{
-				username: 'tester',
-				password: '574e112a',
-				answer: answer
-			},
-			{
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				}
-			}
-		)
+		const res = await axios.post(ROBOTS_PORTAL_URL, payload, {
+			headers
+		})
 		return res.data
 	} catch (error) {
-		console.error('Error hacking Robots Page:', error instanceof Error ? error.message : error)
+		const errorMessage =
+			error instanceof AxiosError
+				? `Network error: ${error.message}`
+				: error instanceof Error
+					? error.message
+					: error
+
+		console.error('Error hacking Robots Page:', errorMessage)
 		throw new Error('Error hacking Robots Page while posting the captcha answer')
 	}
 }

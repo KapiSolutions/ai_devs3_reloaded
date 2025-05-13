@@ -1,8 +1,8 @@
-import app from "./app";
-import dotenv from "dotenv";
-dotenv.config();
+import app from './app'
+import { PORT, validateEnvs } from './config/envs'
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server running on http://localhost:3000");
-});
- 
+validateEnvs()
+
+app.listen(PORT, () => {
+	console.log(`Server running on http://localhost:${PORT}`)
+})

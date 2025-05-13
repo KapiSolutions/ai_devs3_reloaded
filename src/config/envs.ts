@@ -1,6 +1,6 @@
 export const PORT = process.env.PORT || 3000
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY || ''
-export const ROBOTS_PORTAL_URL = process.env.ROBOTS_PORTAL_URLL || ''
+export const ROBOTS_PORTAL_URL = process.env.ROBOTS_PORTAL_URL || ''
 
 const requiredEnvVars = ['OPENAI_API_KEY', 'ROBOTS_PORTAL_URL']
 

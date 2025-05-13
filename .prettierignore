@@ -1,0 +1,62 @@
+# Dependencies
+node_modules
+bun.lockb
+
+# Build outputs
+dist
+build
+out
+lib
+coverage
+
+# Bun specific
+.bun
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+bun-debug.log*
+
+# Cache
+.npm
+.eslintcache
+.cache
+.parcel-cache
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Editor directories and files
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary files
+.DS_Store
+*.tsbuildinfo
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Package files
+package-lock.json
+yarn.lock
+# Note: bun.lockb is already ignored above
+
+# Generated documentation
+docs
+
+# Generated type definitions
+*.d.ts

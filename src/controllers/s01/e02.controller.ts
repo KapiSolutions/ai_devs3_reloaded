@@ -1,0 +1,50 @@
+import { Request, Response } from 'express'
+import axios, { AxiosError } from 'axios'
+import { OpenAIClient } from '@lib/openai'
+import { ROBOTS_PORTAL_URL } from 'src/config/envs'
+
+interface RequestPayload {
+	text: string
+	msgID: number
+}
+
+export default async function playE02(_: Request, res: Response) {
+	try {
+		let payload: RequestPayload = { text: 'READY', msgID: 0 }
+		let response = await axios.post<RequestPayload>(`${ROBOTS_PORTAL_URL}/verify`, payload)
+		const { text: question, msgID } = response.data
+
+		const ai = new OpenAIClient()
+		const answer = await ai.response({ input: getPrompt(question) })
+		console.log({ msgID, question, answer })
+
+		payload = { text: answer, msgID }
+		response = await axios.post<RequestPayload>(`${ROBOTS_PORTAL_URL}/verify`, payload)
+		console.log(response.data)
+
+		res.status(200).send(response.data)
+	} catch (error) {
+		const errorMessage =
+			error instanceof AxiosError
+				? `Network error: ${error.message}`
+				: error instanceof Error
+					? error.message
+					: error
+
+		console.error('Error handling E02:', error)
+
+		return res.status(500).json({
+			message: '❌ Error handling E02',
+			error: errorMessage
+		})
+	}
+}
+
+function getPrompt(question: string): string {
+	return `Take these statements as true:
+    - stolicą Polski jest Kraków
+    - znana liczba z książki Autostopem przez Galaktykę to 69
+    - Aktualny rok to 1999
+    Answer the given question without any additional information or comments, provide only the correct answer as word or number.
+    Question: ${question}`
+}

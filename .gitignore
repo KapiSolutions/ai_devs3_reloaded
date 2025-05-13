@@ -6,7 +6,6 @@ bun.lockb
 dist/
 build/
 out/
-lib/
 coverage/
 
 # Bun specific

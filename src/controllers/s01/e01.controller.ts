@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { OpenAIClient } from '@lib/openai'
 import { ROBOTS_PORTAL_URL } from 'src/config/envs'
+import getErrorMessage from '@lib/handleErrors'
 
 export default async function playE01(_: Request, res: Response) {
 	try {
@@ -25,13 +26,7 @@ async function getRobotsLoginPage() {
 		const html = response.data
 		return html
 	} catch (error) {
-		const errorMessage =
-			error instanceof AxiosError
-				? `Network error: ${error.message}`
-				: error instanceof Error
-					? error.message
-					: error
-
+		const errorMessage = getErrorMessage(error)
 		console.error('Error fetching robots login page:', errorMessage)
 		throw new Error('Failed to fetch robots login page')
 	}
@@ -71,13 +66,7 @@ async function hackRobotsLoginPage(answer: string) {
 		})
 		return res.data
 	} catch (error) {
-		const errorMessage =
-			error instanceof AxiosError
-				? `Network error: ${error.message}`
-				: error instanceof Error
-					? error.message
-					: error
-
+		const errorMessage = getErrorMessage(error)
 		console.error('Error hacking Robots Page:', errorMessage)
 		throw new Error('Error hacking Robots Page while posting the captcha answer')
 	}

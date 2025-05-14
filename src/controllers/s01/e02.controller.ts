@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { OpenAIClient } from '@lib/openai'
 import { ROBOTS_PORTAL_URL } from 'src/config/envs'
+import getErrorMessage from '@lib/handleErrors'
 
 interface RequestPayload {
 	text: string
@@ -24,14 +25,8 @@ export default async function playE02(_: Request, res: Response) {
 
 		res.status(200).send(response.data)
 	} catch (error) {
-		const errorMessage =
-			error instanceof AxiosError
-				? `Network error: ${error.message}`
-				: error instanceof Error
-					? error.message
-					: error
-
-		console.error('Error handling E02:', error)
+		const errorMessage = getErrorMessage(error)
+		console.error('Error handling E02:', errorMessage)
 
 		return res.status(500).json({
 			message: '❌ Error handling E02',

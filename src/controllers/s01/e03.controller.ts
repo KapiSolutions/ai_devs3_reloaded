@@ -55,7 +55,7 @@ async function getCalibrationData(): Promise<CalibrationData> {
 async function validateData(calibrationData: CalibrationData) {
 	const testData = calibrationData['test-data']
 	try {
-		await Promise.all(
+		const validatedData = await Promise.all(
 			testData.map(async (item) => {
 				const additionResult = getAdditionResult(item.question)
 				if (item.answer !== additionResult) {
@@ -77,7 +77,7 @@ async function validateData(calibrationData: CalibrationData) {
 		)
 		return {
 			...calibrationData,
-			'test-data': testData
+			'test-data': validatedData
 		}
 	} catch (error) {
 		throw new Error(`Failed to validate data: ${getErrorMessage(error)}`)
@@ -100,7 +100,15 @@ async function reportData(validatedData: CalibrationData) {
 }
 
 function getAdditionResult(input: string): number {
+	// Validate input is an addition problem
+	if (!input.includes('+')) {
+		throw new Error(`Invalid addition format: ${input}`)
+	}
 	const [a, b] = input.split('+').map((num) => parseInt(num.trim(), 10))
+	// Check for NaN values
+	if (isNaN(a) || isNaN(b)) {
+		throw new Error(`Invalid numbers in addition: ${input}`)
+	}
 	return a + b
 }
 

@@ -9,7 +9,7 @@ export default async function playE05(_: Request, res: Response) {
 	try {
 		const agentsData = await getAgentsData()
 		console.log('🙎 Agents data:', agentsData)
-		const censoredData = await censoreData(agentsData)
+		const censoredData = await censorData(agentsData)
 		console.log('🥷  Censored data:', censoredData)
 		const reportResponse = await reportData(censoredData)
 
@@ -29,17 +29,17 @@ async function getAgentsData(): Promise<string> {
 
 		return response.data
 	} catch (error) {
-		throw new Error(`Failed to fetch calibration data: ${getErrorMessage(error)}`)
+		throw new Error(`Failed to fetch agents data: ${getErrorMessage(error)}`)
 	}
 }
 
-async function censoreData(agentsData: string): Promise<string> {
+async function censorData(agentsData: string): Promise<string> {
 	try {
 		const openai = new OpenAIClient()
 		const prompt = getPrompt(agentsData)
 		return await openai.response({ input: prompt })
 	} catch (error) {
-		throw new Error(`Failed to censore data: ${getErrorMessage(error)}`)
+		throw new Error(`Failed to censor data: ${getErrorMessage(error)}`)
 	}
 }
 
@@ -77,5 +77,5 @@ function getPrompt(input: string): string {
 	- input : "Osoba Krzysztof Kwiatkowski. Mieszka w Szczecinie przy ul. Różanej 12. Ma 31 lat."
 	- output: "Osoba CENZURA. Mieszka w CENZURA przy ul. CENZURA. Ma CENZURA lat."
 
-    Text to censore: ${input}`
+    Text to censor: ${input}`
 }

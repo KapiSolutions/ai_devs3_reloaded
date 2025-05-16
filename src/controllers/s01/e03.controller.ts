@@ -32,10 +32,7 @@ export default async function playE03(_: Request, res: Response) {
 		const errorMessage = getErrorMessage(error)
 		console.error('Error handling E03:', errorMessage)
 
-		return res.status(500).json({
-			message: '❌ Error handling E03',
-			error: errorMessage
-		})
+		return res.status(500).json({ status: '❌ Error', message: errorMessage })
 	}
 }
 

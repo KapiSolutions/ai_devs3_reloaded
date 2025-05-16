@@ -11,14 +11,18 @@ interface RequestPayload {
 
 export default async function playE02(_: Request, res: Response) {
 	try {
+		// Get test question from the robots portal
 		let payload: RequestPayload = { text: 'READY', msgID: 0 }
 		let response = await axios.post<RequestPayload>(`${ROBOTS_PORTAL_URL}/verify`, payload)
 		const { text: question, msgID } = response.data
+		console.log('🧠 Question:', question)
 
+		// Generate answer
 		const ai = new OpenAIClient()
 		const answer = await ai.response({ input: getPrompt(question) })
-		console.log({ msgID, question, answer })
+		console.log('🤖 Answer:', answer)
 
+		// Send answer to the robots portal
 		payload = { text: answer, msgID }
 		response = await axios.post<RequestPayload>(`${ROBOTS_PORTAL_URL}/verify`, payload)
 		console.log(response.data)
@@ -28,10 +32,7 @@ export default async function playE02(_: Request, res: Response) {
 		const errorMessage = getErrorMessage(error)
 		console.error('Error handling E02:', errorMessage)
 
-		return res.status(500).json({
-			message: '❌ Error handling E02',
-			error: errorMessage
-		})
+		return res.status(500).json({ status: '❌ Error', message: errorMessage })
 	}
 }
 

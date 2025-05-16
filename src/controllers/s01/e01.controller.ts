@@ -4,6 +4,8 @@ import { OpenAIClient } from '@lib/openai'
 import { ROBOTS_PORTAL_URL } from 'src/config/envs'
 import getErrorMessage from '@lib/handleErrors'
 
+const openai = OpenAIClient.getInstance()
+
 export default async function playE01(_: Request, res: Response) {
 	try {
 		const robotsLoginPage = await getRobotsLoginPage()
@@ -41,7 +43,6 @@ async function getCaptchaQuestion(html: string) {
 }
 
 async function getCaptchaAnswer(question: string) {
-	const openai = new OpenAIClient()
 	const input = `Answer the question: ${question}. Provide only the year without any explanation or comments.`
 	return await openai.response({ input })
 }

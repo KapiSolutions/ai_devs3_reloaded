@@ -20,6 +20,8 @@ interface CalibrationData {
 	'test-data': TestItem[]
 }
 
+const openai = OpenAIClient.getInstance()
+
 export default async function playE03(_: Request, res: Response) {
 	try {
 		const calibrationData = await getCalibrationData()
@@ -63,7 +65,6 @@ async function validateData(calibrationData: CalibrationData) {
 				}
 				if (item.test) {
 					console.log(`🧠  Detected question: ${item.test.q} Finding answer..`)
-					const openai = new OpenAIClient()
 					const prompt = getPrompt(item.test.q)
 					const answer = await openai.response({ input: prompt })
 					console.log(`🤖 ${item.test.q} Answer: ${answer}`)

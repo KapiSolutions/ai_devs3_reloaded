@@ -9,6 +9,8 @@ interface RequestPayload {
 	msgID: number
 }
 
+const openai = OpenAIClient.getInstance()
+
 export default async function playE02(_: Request, res: Response) {
 	try {
 		// Get test question from the robots portal
@@ -18,8 +20,7 @@ export default async function playE02(_: Request, res: Response) {
 		console.log('🧠 Question:', question)
 
 		// Generate answer
-		const ai = new OpenAIClient()
-		const answer = await ai.response({ input: getPrompt(question) })
+		const answer = await openai.response({ input: getPrompt(question) })
 		console.log('🤖 Answer:', answer)
 
 		// Send answer to the robots portal

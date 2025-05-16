@@ -5,6 +5,8 @@ import { AIDEVS_API_KEY, CENTRALA_URL } from 'src/config/envs'
 import getErrorMessage from '@lib/handleErrors'
 import { ReportData, ReportResponse } from 'src/config/types'
 
+const openai = OpenAIClient.getInstance()
+
 export default async function playE05(_: Request, res: Response) {
 	try {
 		const agentsData = await getAgentsData()
@@ -35,7 +37,6 @@ async function getAgentsData(): Promise<string> {
 
 async function censorData(agentsData: string): Promise<string> {
 	try {
-		const openai = new OpenAIClient()
 		const prompt = getPrompt(agentsData)
 		return await openai.response({ input: prompt })
 	} catch (error) {

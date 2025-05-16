@@ -20,6 +20,8 @@ interface CalibrationData {
 	'test-data': TestItem[]
 }
 
+const openai = OpenAIClient.getInstance()
+
 export default async function playE03(_: Request, res: Response) {
 	try {
 		const calibrationData = await getCalibrationData()
@@ -32,10 +34,7 @@ export default async function playE03(_: Request, res: Response) {
 		const errorMessage = getErrorMessage(error)
 		console.error('Error handling E03:', errorMessage)
 
-		return res.status(500).json({
-			message: '❌ Error handling E03',
-			error: errorMessage
-		})
+		return res.status(500).json({ status: '❌ Error', message: errorMessage })
 	}
 }
 
@@ -66,7 +65,6 @@ async function validateData(calibrationData: CalibrationData) {
 				}
 				if (item.test) {
 					console.log(`🧠  Detected question: ${item.test.q} Finding answer..`)
-					const openai = new OpenAIClient()
 					const prompt = getPrompt(item.test.q)
 					const answer = await openai.response({ input: prompt })
 					console.log(`🤖 ${item.test.q} Answer: ${answer}`)

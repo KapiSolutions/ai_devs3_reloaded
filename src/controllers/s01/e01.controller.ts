@@ -4,6 +4,8 @@ import { OpenAIClient } from '@lib/openai'
 import { ROBOTS_PORTAL_URL } from 'src/config/envs'
 import getErrorMessage from '@lib/handleErrors'
 
+const openai = OpenAIClient.getInstance()
+
 export default async function playE01(_: Request, res: Response) {
 	try {
 		const robotsLoginPage = await getRobotsLoginPage()
@@ -12,11 +14,10 @@ export default async function playE01(_: Request, res: Response) {
 		const result = await hackRobotsLoginPage(answer)
 		res.status(200).send(result)
 	} catch (error) {
-		console.error('Error handling E01:', error)
-		res.status(500).send({
-			message: '❌ Error handling E01',
-			error: error instanceof Error ? error.message : error
-		})
+		const errorMessage = getErrorMessage(error)
+		console.error('Error handling E01:', errorMessage)
+
+		return res.status(500).json({ status: '❌ Error', message: errorMessage })
 	}
 }
 
@@ -26,9 +27,7 @@ async function getRobotsLoginPage() {
 		const html = response.data
 		return html
 	} catch (error) {
-		const errorMessage = getErrorMessage(error)
-		console.error('Error fetching robots login page:', errorMessage)
-		throw new Error('Failed to fetch robots login page')
+		throw new Error(`Failed to fetch robots login page: ${getErrorMessage(error)}`)
 	}
 }
 
@@ -39,13 +38,11 @@ async function getCaptchaQuestion(html: string) {
 		const question = match[1].trim()
 		return question
 	} else {
-		console.log('Captcha Question not found.')
 		throw new Error('Captcha Question not found.')
 	}
 }
 
 async function getCaptchaAnswer(question: string) {
-	const openai = new OpenAIClient()
 	const input = `Answer the question: ${question}. Provide only the year without any explanation or comments.`
 	return await openai.response({ input })
 }
@@ -61,13 +58,11 @@ async function hackRobotsLoginPage(answer: string) {
 	}
 
 	try {
-		const res = await axios.post(ROBOTS_PORTAL_URL, payload, {
-			headers
-		})
+		const res = await axios.post(ROBOTS_PORTAL_URL, payload, { headers })
 		return res.data
 	} catch (error) {
-		const errorMessage = getErrorMessage(error)
-		console.error('Error hacking Robots Page:', errorMessage)
-		throw new Error('Error hacking Robots Page while posting the captcha answer')
+		throw new Error(
+			`Error hacking Robots Page while posting the captcha answer': ${getErrorMessage(error)}`
+		)
 	}
 }

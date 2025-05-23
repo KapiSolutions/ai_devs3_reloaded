@@ -26,7 +26,7 @@ export default async function playE03(_: Request, res: Response) {
 		res.status(200).send(reportResponse)
 	} catch (error) {
 		const errorMessage = getErrorMessage(error)
-		console.error('Error handling E05:', errorMessage)
+		console.error('Error handling S02E03:', errorMessage)
 
 		return res.status(500).json({ status: '❌ Error', message: errorMessage })
 	}
@@ -39,7 +39,7 @@ async function getRobotInfo(): Promise<string> {
 		const robotInfo = response.data
 		return robotInfo.description
 	} catch (error) {
-		throw new Error(`Failed to fetch calibration data: ${getErrorMessage(error)}`)
+		throw new Error(`Failed to fetch robot description: ${getErrorMessage(error)}`)
 	}
 }
 

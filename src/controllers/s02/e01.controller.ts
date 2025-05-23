@@ -11,10 +11,13 @@ import path from 'path'
 const openai = OpenAIClient.getInstance()
 const groq = new Groq()
 
+/**
+ * S02E01 - Audio and Voice Interface
+ */
 export default async function playE01(_: Request, res: Response) {
 	try {
 		const recordsPaths = getRecordsPaths()
-		const transcriptedRecords = await transciptAudioRecords(recordsPaths)
+		const transcriptedRecords = await transcriptAudioRecords(recordsPaths)
 		console.log('Records Transcription:', transcriptedRecords)
 
 		const address = await findInstituteAddress(transcriptedRecords)
@@ -31,27 +34,24 @@ export default async function playE01(_: Request, res: Response) {
 }
 
 function getRecordsPaths(): string[] {
+	const dir = path.resolve('src/data/s02e01/records')
 	try {
-		const projectRoot = process.cwd()
-		const recordsPath = path.join(projectRoot, 'src', 'data', 's02e01', 'records')
-		const recordPaths = fs.readdirSync(recordsPath).map((file) => `${recordsPath}/${file}`)
+		const files = fs.readdirSync(dir)
+		if (!files.length) throw new Error(`No records found at ${dir}`)
 
-		if (recordPaths.length === 0)
-			throw new Error(`No records found in the directory: ${recordsPath}`)
-		return recordPaths
+		return files.map((file) => path.join(dir, file))
 	} catch (error) {
 		throw new Error(`Failed to get records paths: ${getErrorMessage(error)}`)
 	}
 }
 
-async function transciptAudioRecords(recordsPaths: string[]): Promise<string> {
+async function transcriptAudioRecords(paths: string[]): Promise<string> {
 	try {
-		console.log('recordsPaths:', recordsPaths)
-		console.log('⏳ Transcribing audio records...')
+		console.log(`🎙️ Transcribing ${paths.length} files...`)
 		const transcriptedTexts = await Promise.all(
-			recordsPaths.map(async (recordPath) => {
+			paths.map(async (path) => {
 				const transcription = await groq.audio.transcriptions.create({
-					file: fs.createReadStream(recordPath),
+					file: fs.createReadStream(path),
 					model: 'whisper-large-v3-turbo'
 				})
 				return transcription.text
@@ -65,7 +65,7 @@ async function transciptAudioRecords(recordsPaths: string[]): Promise<string> {
 
 async function findInstituteAddress(text: string): Promise<string> {
 	try {
-		console.log('⏳ Finding institute address...')
+		console.log('📍 Finding institute address...')
 		const prompt = getPrompt(text)
 		return await openai.response({ input: prompt })
 	} catch (error) {

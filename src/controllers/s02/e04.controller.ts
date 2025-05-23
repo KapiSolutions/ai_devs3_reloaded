@@ -120,7 +120,21 @@ async function categorizeAndSortData(data: FileWithContent[]): Promise<Categoriz
 		console.log('⏳ Categorizing and sorting data...')
 		const prompt = getPrompt(JSON.stringify(data))
 		const text = await openai.response({ input: prompt })
-		return JSON.parse(text)
+		try {
+			const parsed = JSON.parse(text)
+			// Validate structure
+			if (
+				!parsed.people ||
+				!Array.isArray(parsed.people) ||
+				!parsed.hardware ||
+				!Array.isArray(parsed.hardware)
+			) {
+				throw new Error('Invalid response structure from AI')
+			}
+			return parsed
+		} catch (parseError) {
+			throw new Error(`Failed to parse AI response: ${getErrorMessage(parseError)}`)
+		}
 	} catch (error) {
 		throw new Error(`Failed to categorize and sort: ${getErrorMessage(error)}`)
 	}

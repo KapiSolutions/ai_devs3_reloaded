@@ -51,7 +51,7 @@ export default async function playE04(_: Request, res: Response) {
 async function getProperFiles() {
 	const dir = path.resolve('src/data/industry_files/')
 	try {
-		const allFiles = fs.readdirSync(dir)
+		const allFiles = await fs.promises.readdir(dir)
 		if (!allFiles.length) throw new Error(`No files found at ${dir}`)
 
 		const files = allFiles.filter((file) => {

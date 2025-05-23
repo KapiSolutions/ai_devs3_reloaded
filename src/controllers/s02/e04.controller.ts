@@ -72,7 +72,7 @@ async function getFilesContext(filePaths: string[]): Promise<FileWithContent[]> 
 	try {
 		return await Promise.all(
 			filePaths.map(async (filePath) => {
-				const buffer = fs.readFileSync(filePath)
+				const buffer = await fs.promises.readFile(filePath)
 				const fileName = path.basename(filePath)
 				const ext = path.extname(filePath)
 

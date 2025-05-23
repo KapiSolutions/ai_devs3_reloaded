@@ -80,6 +80,9 @@ temp/
 !.yarn/sdks
 !.yarn/versions
 
+# Tesseract
+*.traineddata
+
 # Optional: Keep specific dependencies for platforms where bun.lockb is not used
 # package-lock.json
 # yarn.lock

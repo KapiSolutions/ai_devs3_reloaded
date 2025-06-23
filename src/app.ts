@@ -3,6 +3,7 @@ import cors from 'cors'
 import s01Routes from './routes/s01.routes'
 import s02Routes from './routes/s02.routes'
 import s03Routes from './routes/s03.routes'
+import s04Routes from './routes/s04.routes'
 import helmet from 'helmet'
 import { corsOptions, rateLimiter } from './config/server.config'
 
@@ -17,6 +18,7 @@ app.use('/api', rateLimiter)
 app.use('/api/s01', s01Routes)
 app.use('/api/s02', s02Routes)
 app.use('/api/s03', s03Routes)
+app.use('/api/s04', s04Routes)
 
 // Root route
 app.get('/', (_, res: Response) => {
